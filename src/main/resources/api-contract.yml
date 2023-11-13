@@ -1,0 +1,198 @@
+---
+openapi: 3.0.3
+info:
+  title: Phone Booking API
+  description: |-
+    This is an API to book mobile phones
+
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/v1
+paths:
+  /phones:
+    get:
+      x-spring-paginated: true
+      tags:
+        - phones
+      summary: Get list of all phones
+      operationId: find
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhoneResponseList'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /phones/{id}:
+    get:
+      x-spring-paginated: true
+      tags:
+        - phones
+      summary: Get details of the phone
+      operationId: getPhone
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhoneResource'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /phones/book:
+    post:
+      tags:
+        - booking
+      summary: Book a phone
+      operationId: bookPhones
+      requestBody:
+        description: Book a phone
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookingRequestResource'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhoneResponseList'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /phones/return:
+    post:
+      tags:
+        - booking
+      summary: Return phone
+      operationId: returnPhones
+      requestBody:
+        description: Return a phone
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookingRequestResource'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhoneResponseList'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          example: '2023-10-12T09:46:48.553Z'
+        status:
+          type: integer
+          example: 404
+        message:
+          type: string
+          example: Required field is missing
+    Page:
+      type: object
+      properties:
+        pageSize:
+          type: integer
+          format: int32
+        pageNumber:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+    PhoneResponseList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/PhoneResource'
+        error:
+          $ref: '#/components/schemas/Error'
+        page:
+          $ref: '#/components/schemas/Page'
+    PhoneResource:
+      required:
+        - name
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 'b8017b0a-6507-11ee-8c99-0242ac120002'
+        name:
+          type: string
+          example: 'Samsung Galaxy S9'
+        available:
+          type: boolean
+        booking:
+          $ref: '#/components/schemas/BookingResource'
+    BookingResource:
+      type: object
+      properties:
+        bookingTime:
+          type: string
+          format: date-time
+          description: DateTime when phone was booked
+          example: '2023-10-12T09:46:48.553Z'
+        bookedBy:
+          type: string
+          description: Who booked the phone
+          example: David Jones
+    BookingRequestResource:
+      type: object
+      required:
+        - phones
+        - bookedBy
+      properties:
+        phones:
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: Phone ID
+            example: 'b8017b0a-6507-11ee-8c99-0242ac120002'
+        bookedBy:
+          type: string
+          description: Who booked the phone
+          example: David Jones
