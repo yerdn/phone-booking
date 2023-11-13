@@ -61,3 +61,12 @@ POST http://localhost:8080/api/v1/phones/return
   "bookedBy": "David Jones"
 }
 ```
+
+### REFLECTION:
+• What aspect of this exercise did you find most interesting?
+
+Most interesting was creating OpenAPI spec and shaping out REST API
+
+• What did you find most cumbersome?
+
+Setting up initial project structure and writing Unit Tests
