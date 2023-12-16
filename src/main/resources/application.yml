@@ -9,25 +9,27 @@ application:
   phone-booking-queue: phone.booking.queue
 spring:
   datasource:
-    url: jdbc:h2:file:./db/phones;DB_CLOSE_DELAY=-1;AUTO_SERVER=TRUE
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    url: jdbc:postgresql://${DB_HOST:localhost}:5432/phones
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
-    defer-datasource-initialization: true
-    show-sql: true
+      ddl-auto: validate
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   sql:
     init:
       mode: always
   activemq:
     pool:
       enabled: false
-    broker-url: vm://embedded?broker.persistent=false,useShutdownHook=false
+    broker-url: tcp://${ACTIVE_MQ_HOST:localhost}:61616
+    user: artemis
+    password: artemis
   jms:
     template:
       default-destination: phone.booking.queue

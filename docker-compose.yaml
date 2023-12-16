@@ -1,0 +1,37 @@
+---
+version: '3.9'
+networks:
+  phone-booking-network:
+    name: phone-booking-network
+    external: true
+services:
+  db:
+    image: postgres:16-alpine
+    networks:
+      - phone-booking-network
+    container_name: 'postgres'
+    restart: always
+    environment:
+      - POSTGRES_DB=phones
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - db:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/create_tables.sql
+      - ./db/initial_data.sql:/docker-entrypoint-initdb.d/data.sql
+
+  activemq:
+    image: apache/activemq-artemis:latest-alpine
+    networks:
+      - phone-booking-network
+    container_name: 'activemq'
+    environment:
+      EXTRA_ARGS: '--nio --host 0.0.0.0 --http-host 0.0.0.0 --relax-jolokia'
+    ports:
+      - '61616:61616'
+      - '8161:8161'
+volumes:
+  db:
+    driver: local

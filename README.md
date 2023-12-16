@@ -10,15 +10,33 @@ Service has Jms Listener which logs messages received in the queue to the consol
 ## How to build
 
 ```
-mvn clean package
+./mvnnw clean package
 ```
 
 ## How to run
+
+It requires PostreSQL DB and ActiveMQ. Docker compose file is provided to run them in docker:
+```
+docker-compose up -d
+```
+
 
 It can be run in idea (main class PhoneBookingApiApplication) or as executable jar
 
 ```
 java -jar target/phone-booking-api-0.0.1-SNAPSHOT.jar
+```
+
+Project also has Dockerfile, so you can build docker image and run it
+```
+docker build -t phone-booking .
+```
+Run docker image and specify the `network` to the same network as in `docker-compose.yaml` file.
+
+You also need to pass `DB_HOST` and `ACTIVE_MQ_HOST` environment variables 
+with the values matching container names from `docker-compose.yaml` file. 
+```
+docker run -p 8080:8080 --network phone-booking-network -e DB_HOST='postgres' -e ACTIVE_MQ_HOST='activemq' phone-booking
 ```
 
 It will run Tomcat on http://localhost:8080

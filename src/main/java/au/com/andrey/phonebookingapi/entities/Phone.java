@@ -17,7 +17,7 @@ public class Phone {
     private String name;
 
     @ManyToOne
-    @JoinTable(name = "pnone_booking",
+    @JoinTable(name = "phone_booking",
             joinColumns = {@JoinColumn(name = "phone_id")},
             inverseJoinColumns = {@JoinColumn(name = "booking_id")})
     private Booking booking;
